@@ -155,7 +155,7 @@ class WebGPUTextureUtils {
 
 		const format = getFormat( texture );
 
-		if ( texture.isCubeTexture ) {
+		if ( texture.isCubeTexture || texture.isDataCubeTexture ) {
 
 			textureGPU = this._getDefaultCubeTextureGPU( format );
 
@@ -270,7 +270,7 @@ class WebGPUTextureUtils {
 
 			}
 
-			if ( texture.isCubeTexture ) {
+			if ( texture.isCubeTexture || texture.isDataCubeTexture ) {
 
 				textureDescriptorGPU.textureBindingViewDimension = GPUTextureViewDimension.Cube;
 
@@ -338,7 +338,7 @@ class WebGPUTextureUtils {
 
 		const textureData = this.backend.get( texture );
 
-		if ( texture.isCubeTexture ) {
+		if ( texture.isCubeTexture || texture.isDataCubeTexture ) {
 
 			for ( let i = 0; i < 6; i ++ ) {
 
@@ -476,7 +476,7 @@ class WebGPUTextureUtils {
 
 			this._copyCompressedBufferToTexture( texture.mipmaps, textureData.texture, textureDescriptorGPU );
 
-		} else if ( texture.isCubeTexture ) {
+		} else if ( texture.isCubeTexture || texture.isDataCubeTexture ) {
 
 			this._copyCubeMapToTexture( options.images, textureData.texture, textureDescriptorGPU, texture.flipY, texture.premultiplyAlpha );
 

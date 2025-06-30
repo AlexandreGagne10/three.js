@@ -20,12 +20,18 @@
  			other hardware-specific formats, this loader does not yet parse them.
 		</p>
 
-		<p>
-			This loader parses the KTX 2.0 container and transcodes to a supported GPU compressed
-			texture format. The required WASM transcoder and JS wrapper are available from the
-			[link:https://github.com/mrdoob/three.js/tree/dev/examples/jsm/libs/basis examples/jsm/libs/basis]
-			directory.
-		</p>
+                <p>
+                        This loader parses the KTX 2.0 container and transcodes to a supported GPU compressed
+                        texture format. The required WASM transcoder and JS wrapper are available from the
+                        [link:https://github.com/mrdoob/three.js/tree/dev/examples/jsm/libs/basis examples/jsm/libs/basis]
+                        directory.
+                </p>
+
+                <p>
+                        In addition to compressed textures, uncompressed <code>u8</code>, <code>f16</code> and <code>f32</code>
+                        KTX2 files load as <code>DataTexture</code>, <code>DataArrayTexture</code>, or <code>DataCubeTexture</code>
+                        depending on the container type.
+                </p>
 
 		<h2>Import</h2>
 

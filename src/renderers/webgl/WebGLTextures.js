@@ -854,6 +854,7 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 		if ( texture.isDataArrayTexture || texture.isCompressedArrayTexture ) textureType = _gl.TEXTURE_2D_ARRAY;
 		if ( texture.isData3DTexture ) textureType = _gl.TEXTURE_3D;
+		if ( texture.isDataCubeTexture ) textureType = _gl.TEXTURE_CUBE_MAP;
 
 		const forceUpload = initTexture( textureProperties, texture );
 		const source = texture.source;
@@ -1170,6 +1171,75 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 				} else {
 
 					state.texImage3D( _gl.TEXTURE_3D, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data );
+
+				}
+
+			} else if ( texture.isDataCubeTexture ) {
+
+				if ( mipmaps.length > 0 ) {
+
+					if ( useTexStorage && allocateMemory ) {
+
+						state.texStorage2D( _gl.TEXTURE_CUBE_MAP, levels, glInternalFormat, mipmaps[ 0 ].width, mipmaps[ 0 ].height );
+
+					}
+
+					for ( let i = 0, il = mipmaps.length; i < il; i ++ ) {
+
+						mipmap = mipmaps[ i ];
+						const faceByteLength = getByteLength( mipmap.width, mipmap.height, texture.format, texture.type );
+						for ( let face = 0; face < 6; face ++ ) {
+
+							const offset = face * faceByteLength / mipmap.data.BYTES_PER_ELEMENT;
+							const data = mipmap.data.subarray( offset, offset + faceByteLength / mipmap.data.BYTES_PER_ELEMENT );
+							if ( useTexStorage ) {
+
+								if ( dataReady ) {
+
+									state.texSubImage2D( _gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, data );
+
+								}
+
+							} else {
+
+								state.texImage2D( _gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, data );
+
+							}
+
+						}
+
+					}
+
+					texture.generateMipmaps = false;
+
+				} else {
+
+					if ( useTexStorage && allocateMemory ) {
+
+						state.texStorage2D( _gl.TEXTURE_CUBE_MAP, levels, glInternalFormat, image.width, image.height );
+
+					}
+
+					const faceByteLength = getByteLength( image.width, image.height, texture.format, texture.type );
+					for ( let face = 0; face < 6; face ++ ) {
+
+						const offset = face * faceByteLength / image.data.BYTES_PER_ELEMENT;
+						const data = image.data.subarray( offset, offset + faceByteLength / image.data.BYTES_PER_ELEMENT );
+						if ( useTexStorage ) {
+
+							if ( dataReady ) {
+
+								state.texSubImage2D( _gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, 0, 0, image.width, image.height, glFormat, glType, data );
+
+							}
+
+						} else {
+
+							state.texImage2D( _gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, data );
+
+						}
+
+					}
 
 				}
 

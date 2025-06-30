@@ -1,9 +1,10 @@
 import {
 	CompressedArrayTexture,
 	CompressedCubeTexture,
-	CompressedTexture,
-	Data3DTexture,
-	DataTexture,
+       CompressedTexture,
+       Data3DTexture,
+       DataCubeTexture,
+       DataTexture,
 	FileLoader,
 	FloatType,
 	HalfFloatType,
@@ -1090,13 +1091,38 @@ async function createRawTexture( container ) {
 
 	let texture;
 
-	if ( UNCOMPRESSED_FORMATS.has( FORMAT_MAP[ vkFormat ] ) ) {
+       if ( UNCOMPRESSED_FORMATS.has( FORMAT_MAP[ vkFormat ] ) ) {
 
-		texture = container.pixelDepth === 0
-			? new DataTexture( mipmaps[ 0 ].data, container.pixelWidth, container.pixelHeight )
-			: new Data3DTexture( mipmaps[ 0 ].data, container.pixelWidth, container.pixelHeight, container.pixelDepth );
+               if ( container.faceCount === 6 ) {
 
-	} else {
+                       const faceSize = mipmaps[ 0 ].data.byteLength / 6;
+                       const faces = [];
+
+                       for ( let i = 0; i < 6; i ++ ) {
+
+                               const offset = i * faceSize;
+                               const data = new mipmaps[ 0 ].data.constructor(
+                                       mipmaps[ 0 ].data.buffer,
+                                       mipmaps[ 0 ].data.byteOffset + offset,
+                                       faceSize / mipmaps[ 0 ].data.BYTES_PER_ELEMENT
+                               );
+
+                               faces.push( { data, width: container.pixelWidth, height: container.pixelHeight } );
+
+                       }
+
+                       texture = new DataCubeTexture();
+                       texture.image = faces;
+
+               } else {
+
+                       texture = container.pixelDepth === 0
+                               ? new DataTexture( mipmaps[ 0 ].data, container.pixelWidth, container.pixelHeight )
+                               : new Data3DTexture( mipmaps[ 0 ].data, container.pixelWidth, container.pixelHeight, container.pixelDepth );
+
+               }
+
+       } else {
 
 		if ( container.pixelDepth > 0 ) throw new Error( 'THREE.KTX2Loader: Unsupported pixelDepth.' );
 

@@ -84,7 +84,8 @@
 
 			import * as THREE from 'three';
 
-			import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+                        import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+                        import { TextureHelper } from 'three/addons/helpers/TextureHelper.js';
 
 			let canvas, renderer;
 
@@ -118,17 +119,32 @@
 					]
 				},
 
-				{
-					title: 'Universal',
-					description: 'Basis Universal textures are specialized intermediate formats supporting fast'
-						+ ' runtime transcoding into other GPU texture compression formats. After transcoding,'
-						+ ' universal textures can be used on any device at reduced memory cost.',
-					textures: [
-						{ path: '2d_etc1s.ktx2' },
-						{ path: '2d_uastc.ktx2' },
-					]
-				},
-			]
+                                {
+                                        title: 'Universal',
+                                        description: 'Basis Universal textures are specialized intermediate formats supporting fast'
+                                                + ' runtime transcoding into other GPU texture compression formats. After transcoding,'
+                                                + ' universal textures can be used on any device at reduced memory cost.',
+                                        textures: [
+                                                { path: '2d_etc1s.ktx2' },
+                                                { path: '2d_uastc.ktx2' },
+                                        ]
+                                },
+                                {
+                                        title: 'Array',
+                                        description: 'KTX2 array textures load as DataArrayTexture or CompressedArrayTexture.',
+                                        textures: [
+                                                { path: 'arraytex_7.ktx2' },
+                                                { path: 'arraytex_7_mipmap.ktx2' }
+                                        ]
+                                },
+                                {
+                                        title: 'Cube',
+                                        description: 'KTX2 cube textures load as DataCubeTexture or CompressedCubeTexture.',
+                                        textures: [
+                                                { path: 'cubemap_6x6.ktx2' }
+                                        ]
+                                },
+                        ]
 
 			init();
 
@@ -187,13 +203,18 @@
 
 						try {
 
-							const texture = await loader.loadAsync( supported === false ? 'fail_load.ktx2' : path );
-							const mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ map: texture }) );
+                                                        const texture = await loader.loadAsync( supported === false ? 'fail_load.ktx2' : path );
+                                                        let mesh;
+                                                        if ( texture.isCubeTexture || texture.isCompressedCubeTexture || texture.isDataArrayTexture || texture.isCompressedArrayTexture ) {
+                                                                mesh = new TextureHelper( texture );
+                                                        } else {
+                                                                mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: texture } ) );
+                                                        }
 
-							labelElement.innerText += '\ncolorSpace: ' + texture.colorSpace;
+                                                        labelElement.innerText += '\ncolorSpace: ' + texture.colorSpace;
 
-							scene.add( mesh );
-							scenes.push( scene );
+                                                        scene.add( mesh );
+                                                        scenes.push( scene );
 
 						} catch (e) {
 

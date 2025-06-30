@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+	<head>
+		<meta charset="utf-8" />
+		<base href="../../../" />
+		<script src="page.js"></script>
+		<link type="text/css" rel="stylesheet" href="page.css" />
+	</head>
+	<body>
+		[page:Texture] &rarr;
+
+               <h1>[name]</h1>
+
+               <p class="desc">Crea una cube texture direttamente da dati grezzi. L'array dei dati deve contenere le informazioni delle sei facce nell'ordine <code>+x</code>, <code>-x</code>, <code>+y</code>, <code>-y</code>, <code>+z</code>, <code>-z</code>.</p>
+
+		<h2>Costruttore</h2>
+
+		<h3>[name]( data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, colorSpace )</h3>
+		<p>
+                        L'argomento data deve essere un [link:https://developer.mozilla.org/en-US/docs/Web/API/ArrayBufferView ArrayBufferView].
+                        La lunghezza dell'array deve essere <code>width * height * 6 * n</code>, dove <code>n</code> è il numero di canali.
+                        Ulteriori parametri corrispondono alle proprietà ereditate da [page:Texture], dove sia magFilter che minFilter per impostazione predefinita sono THREE.NearestFilter.
+		</p>
+		<p>
+			L'interpretazione dei dati dipende dal tipo e dal formato:
+			Se il tipo è THREE.UnsignedByteType, un Uint8Array sarà utile per indirizzare i dati texel.
+			Se il formato è THREE.RGBAFormat, i dati necessitano di quattro valori per un texel; Rosso, Verde, Blu e Alfa (tipicamente l'opacità).<br />
+
+			Per i tipi compressi, THREE.UnsignedShort4444Type e THREE.UnsignedShort5551Type tutti i componenti di colore di un texel possono essere 
+			indirizzati come campi di bit all'interno di un elemento intero di un Uint16Array.<br />
+
+			Per utilizzare i tipi THREE.FloatType e THREE.HalfFloatType, l'implementazione WebGL deve supportare le 
+			rispettive estensioni OES_texture_float e OES_texture_half_float. 
+			Per utilizzare THREE.LinearFilter per l'interpolazione bilineare component-wise dei texel basati
+			su questi tipi, devono essere presenti anche le estensioni WebGL OES_texture_float_linear o OES_texture_half_float_linear.
+		</p>
+
+		<h2>Codice di Esempio</h2>
+
+		<code>
+                // crea un buffer con i dati del colore per le sei facce
+
+                const width = 256;
+                const height = 256;
+
+                const size = width * height;
+                const data = new Uint8Array( 4 * size * 6 );
+
+                for ( let i = 0; i < 6 * size; i ++ ) {
+
+                        const stride = i * 4;
+
+                        data[ stride ] = 255; // R
+                        data[ stride + 1 ] = 0;   // G
+                        data[ stride + 2 ] = 0;   // B
+                        data[ stride + 3 ] = 255; // A
+
+                }
+
+                // utilizza il buffer per creare un [name]
+
+                const texture = new THREE.DataCubeTexture( data, width, height );
+                texture.needsUpdate = true;
+		</code>
+
+		<h2>Proprietà</h2>
+
+		<p>
+    	Vedi la classe base [page:Texture Texture] per le proprietà comuni.
+    </p>
+
+		<h3>[property:Boolean flipY]</h3>
+		<p>
+		Se impostato a `true`, la texture viene capovolta lungo l'asse verticale quando viene caricata sulla GPU. L'impostazione predefinita è `false`.
+		</p>
+
+		<h3>[property:Boolean generateMipmaps]</h3>
+		<p>
+			Indica se generare mipmap (se possibile) per una texture. Falso per impostazione predefinita.
+		</p>
+
+		<h3>[property:Object image]</h3>
+		<p>
+			Sostituito con un tipo di record contenente dati, larghezza, altezza e profondità.
+		</p>
+
+               <h3>[property:Boolean isDataCubeTexture]</h3>
+               <p>
+                       Flag di sola lettura per verificare se l'oggetto dato è di tipo [name].
+               </p>
+
+		<h3>[property:number unpackAlignment]</h3>
+		<p>
+		1 per impostazione predefinita. Specifica i requisiti di allineamento per l'inizio di ogni riga di pixel in memoria.
+		I valori consentiti sono 1 (allineamento byte), 2 (righe allineate a byte pari), 4 (allineamento delle parole) e 8
+		(le righe iniziano su limiti di parole doppie).
+		Vedi [link:http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml glPixelStorei]
+		per maggiori informazioni.
+		</p>
+
+		<h2>Metodi</h2>
+
+    <p>
+			Vedi la classe base [page:Texture Texture] per i metodi comuni.
+    </p>
+
+		<h2>Source</h2>
+
+               <p>
+                       [link:https://github.com/mrdoob/three.js/blob/master/src/textures/DataCubeTexture.js src/textures/DataCubeTexture.js]
+               </p>
+	</body>
+</html>

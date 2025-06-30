@@ -20,10 +20,15 @@
 		纹理，可以快速转码为多种 GPU 纹理压缩格式。虽然 KTX 2.0 还允许其他特定于硬件的格式，但此加载程序尚未解析它们。
 	</p>
 
-	<p>
-		该加载程序解析 KTX 2.0 容器并将其转码为受支持的 GPU 压缩纹理格式。所需的 WASM 转码器和 JS 包装器可从
-		[link:https://github.com/mrdoob/three.js/tree/dev/examples/jsm/libs/basis examples/jsm/libs/basis] 目录中获取。
-	</p>
+        <p>
+                该加载程序解析 KTX 2.0 容器并将其转码为受支持的 GPU 压缩纹理格式。所需的 WASM 转码器和 JS 包装器可从
+                [link:https://github.com/mrdoob/three.js/tree/dev/examples/jsm/libs/basis examples/jsm/libs/basis] 目录中获取。
+        </p>
+
+        <p>
+                除了压缩纹理外，未压缩的 <code>u8</code>、<code>f16</code> 和 <code>f32</code> KTX2 文件也被支持，
+                根据容器类型分别加载为 <code>DataTexture</code>、<code>DataArrayTexture</code> 或 <code>DataCubeTexture</code>。
+        </p>
 
 	<h2>导入</h2>
 
